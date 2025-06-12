@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:composite="http://xmlns.jcp.org/jsf/composite"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+
+<h:head>
+    <title>User Management</title>
+</h:head>
+
+<h:body>
+    <h:form id="form" prependId="false">
+
+        <!-- Messages -->
+        <p:messages id="msgs" showDetail="true" closable="true" />
+
+        <!-- Search Panel -->
+        <p:panel header="Search User" style="text-align:right">
+            <h:panelGrid columns="3" style="display:inline-block;">
+                <p:inputText id="searchInput" value="#{userBean.searchKeyword}" placeholder="Search by username" />
+
+                <p:commandButton value="Search" icon="pi pi-search"
+                                 actionListener="#{userBean.searchUsers}"
+                                 update="userTable msgs"
+                                 process="@this,searchInput" />
+
+                <p:commandButton value="Clear" icon="pi pi-times"
+                                 actionListener="#{userBean.loadUsers}"
+                                 update="userTable searchInput"
+                                 process="@this" />
+            </h:panelGrid>
+        </p:panel>
+
+
+        <!-- Add User Panel -->
+        <p:panel header="Add/Save User">
+            <p:commandButton value="Add User" icon="pi pi-plus"
+                             actionListener="#{userBean.prepareNewUser}"
+                             update="userDialog"
+                             oncomplete="PF('userDialog').show()" />
+        </p:panel>
+
+
+
+
+        <!-- User DataTable -->
+        <p:dataTable id="userTable" value="#{userBean.users}" var="user"
+                     paginator="true" rows="10" responsiveLayout="scroll"
+                     style="margin-top:20px">
+
+            <p:column headerText="ID" sortBy="#{user.id}">
+                <h:outputText value="#{user.id}" />
+            </p:column>
+
+            <p:column headerText="Full Name" sortBy="#{user.fullName}">
+                <h:outputText value="#{user.fullName}" />
+            </p:column>
+
+            <p:column headerText="Email" sortBy="#{user.email}">
+                <h:outputText value="#{user.email}" />
+            </p:column>
+
+            <p:column headerText="Username" sortBy="#{user.username}">
+                <h:outputText value="#{user.username}" />
+            </p:column>
+
+            <p:column headerText="Actions">
+                <!-- Edit Button -->
+                <!-- Edit Button -->
+                <p:commandButton icon="pi pi-pencil" title="Edit"
+                                 actionListener="#{userBean.editUser}"
+                                 update=":form:userDialog"
+                                 oncomplete="PF('userDialog').show()"
+                                 process="@this"
+                                 styleClass="ui-button-warning">
+                    <f:setPropertyActionListener target="#{userBean.selectedUser}" value="#{user}" />
+                </p:commandButton>
+
+
+                <!-- Delete Button (Shows confirm dialog) -->
+                <p:commandButton icon="pi pi-trash" title="Delete"
+                                 onclick="PF('confirmDialog').show()"
+                                 process="@this"
+                                 styleClass="ui-button-danger">
+                    <f:setPropertyActionListener target="#{userBean.selectedUser}" value="#{user}" />
+                </p:commandButton>
+            </p:column>
+        </p:dataTable>
+
+        <!-- Dialog: Add/Edit User -->
+        <p:dialog id="userDialog" header="User Form" widgetVar="userDialog"
+                  modal="true" closable="true" resizable="false" draggable="true">
+
+            <h:panelGrid columns="2" cellpadding="5">
+
+                <h:outputLabel for="fullName" value="Full Name:" />
+                <p:inputText id="fullName" value="#{userBean.selectedUser.fullName}" required="true"/>
+
+                <h:outputLabel for="email" value="Email:" />
+                <p:inputText id="email" value="#{userBean.selectedUser.email}" required="true"/>
+
+                <h:outputLabel for="username" value="Username:" />
+                <p:inputText id="username" value="#{userBean.selectedUser.username}" required="true"/>
+
+                <h:outputLabel for="password" value="Password:" />
+                <p:password id="password" value="#{userBean.selectedUser.password}" required="true"/>
+
+            </h:panelGrid>
+
+            <f:facet name="footer">
+                <p:commandButton value="Save" icon="pi pi-check"
+                                 actionListener="#{userBean.saveUser}"
+                                 update="userTable msgs"
+                                 oncomplete="PF('userDialog').hide()" />
+            </f:facet>
+        </p:dialog>
+
+        <!-- Confirm Dialog for Delete -->
+        <p:confirmDialog id="confirmDialog" widgetVar="confirmDialog" header="Confirm Delete"
+                         message="Are you sure you want to delete this user?" severity="warn" showEffect="fade" hideEffect="fade">
+
+            <p:commandButton value="Yes" icon="pi pi-check"
+                             actionListener="#{userBean.deleteUser(userBean.selectedUser)}"
+                             update="userTable, msgs"
+                             oncomplete="PF('confirmDialog').hide()"
+                             process="@this"
+                             styleClass="ui-button-danger" />
+
+            <p:commandButton value="No" icon="pi pi-times"
+                             onclick="PF('confirmDialog').hide()"
+                             type="button"
+                             styleClass="ui-button-secondary" />
+        </p:confirmDialog>
+
+    </h:form>
+</h:body>
+</html>

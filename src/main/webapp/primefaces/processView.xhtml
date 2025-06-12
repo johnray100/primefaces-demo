@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>ProcessView</title>
+    <!-- Link to styles.css inside /resources/styles/ -->
+    <link rel="stylesheet" href="resources/css/styles.css" type="text/css"/>
+</h:head>
+
+<h:body>
+    <div class="card">
+        <h:form>
+            <h:panelGrid id="grid" cellpadding="7" columns="2" styleClass="mb-3">
+                <p:outputLabel for="firstname" value="Firstname:"/>
+                <p:inputText id="firstname" value="#{processView.firstName}"/>
+
+                <p:outputLabel for="middle" value="Middle:"/>
+                <p:inputText id="middle" value="#{processView.middleName}"/>
+
+                <p:outputLabel for="surname" value="Surname:"/>
+                <p:inputText id="surname" value="#{processView.lastName}" required="true"
+                             requiredMessage="Surname is required"/>
+            </h:panelGrid>
+
+            <p:commandButton value="All" id="btnAll" process="@all" update="grid msgs"
+                             action="#{processView.save}" styleClass="mr-2"/>
+
+            <p:commandButton value="Form" id="btnForm" process="@form" update="grid msgs"
+                             action="#{processView.save}" styleClass="mr-2"/>
+
+            <p:commandButton value="This" id="btnThis" process="@this" update="grid msgs"
+                             action="#{processView.save}" styleClass="mr-2" resetValues="true"/>
+
+            <p:commandButton value="None" id="btnNone" process="@none" update="grid msgs"
+                             action="#{processView.save}" styleClass="mr-2" resetValues="true"/>
+
+            <p:commandButton value="Parent" id="btnParent" process="@parent" update="grid msgs"
+                             action="#{processView.save}" styleClass="mr-2"/>
+
+            <p:commandButton value="This Surname" id="btnSurname" process="@this,surname" update="grid msgs"
+                             action="#{processView.save}"/>
+
+            <p:messages id="msgs"/>
+        </h:form>
+    </div>
+</h:body>
+</html>
